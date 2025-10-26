@@ -2,20 +2,10 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
-from app.database import SessionLocal
+from app.database import get_db
 
 # Create a router for todo endpoints
 router = APIRouter(tags = ["todos"])
-
-
-# Dependency to get DB session
-def get_db():
-    db = SessionLocal() # Create a new database session
-    try:
-        yield db # Yield the session for use in endpoints
-    finally:
-        db.close() # Ensure the session is closed after use
-
 
 # list all todos
 @router.get("/", response_model= list[schemas.TodoOut])
