@@ -20,6 +20,7 @@ A lightweight, full-featured To-Do application backend built with FastAPI, SQLAl
 │   ├── schemas.py         # Pydantic request & response schemas
 │   ├── crud.py            # Database operations
 │   ├── database.py        # DB connection setup
+|   ├── utils.py           # Utility function for password verification and hashing
 │   └── routers/
 │       ├── __init__.py
 │       └── todos.py       # API routes
