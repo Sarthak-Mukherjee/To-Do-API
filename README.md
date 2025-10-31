@@ -11,7 +11,8 @@ A lightweight, full-featured To-Do application backend built with FastAPI, SQLAl
 - ✅Fully extensible and ready for production
 
 # Project Structure
-```todo_app/
+```
+├── app/
 ├── venv/                  # Python virtual environment
 ├── app/
 │   ├── __init__.py
