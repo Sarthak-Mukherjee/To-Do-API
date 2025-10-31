@@ -1,5 +1,6 @@
 # import BaseModel from pydantic for schema definitions
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 #-----------TODO SCHEMAS-----------
 # Base schema for common fields
@@ -15,7 +16,7 @@ class TodoCreate(TodoBase):
 # Update Schema
 class TodoUpdate(TodoBase):
     title: str | None = None # Optional field
-    completed: bool | None = None
+    completed: bool | None = None # Optional field
 
 # Delete Schema
 class TodoDelete(TodoBase):
@@ -32,6 +33,19 @@ class TodoOut(TodoBase):
 
 #-----------USER SCHEMAS-----------
 # Base schema for common fields
+
+class Token(BaseModel):
+    # schema for JWT token response
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    # schema for data contained in JWT token
+    id: Optional[int]= None
+
+
+    
 class UserBase(BaseModel):
     username: str
     email: EmailStr

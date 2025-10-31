@@ -20,3 +20,9 @@ def get_password_hash(password: str):
 
     # Return the hashed password
     return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    
+    """ Verify a plain password against its hashed version and returns True if they match, else False. """
+
+    return pwd_context.verify(plain_password, hashed_password)

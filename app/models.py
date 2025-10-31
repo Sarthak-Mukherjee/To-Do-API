@@ -8,7 +8,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, nullable=False, index=True)
     username = Column(String, nullable=False, index=True)
     email = Column(String, nullable=False, unique=True, index=True)
-    hashed_password = Column(String, nullable=False)
+    password = Column(String, nullable=False)
 
     todos = relationship("Todo", back_populates="owner")  # Establish relationship with Todo model
 
