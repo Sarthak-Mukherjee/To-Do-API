@@ -25,14 +25,14 @@ class TodoDelete(TodoBase):
 # Output Schema
 class TodoOut(TodoBase):
     id : int # ID of the todo item
-    user_id : int # ID of the user who owns the todo item
+    owner_id : int # ID of the user who owns the todo item
 
     class Config:
         orm_mode = True # Enable ORM mode for compatibility with SQLAlchemy models
 
 
-#-----------USER SCHEMAS-----------
-# Base schema for common fields
+#-----------TOKEN SCHEMAS-----------
+# Base schema for TOKEN fields
 
 class Token(BaseModel):
     # schema for JWT token response
@@ -45,6 +45,8 @@ class TokenData(BaseModel):
     id: Optional[int]= None
 
 
+#-----------USER SCHEMAS-----------
+# Base schema for User fields
     
 class UserBase(BaseModel):
     username: str

@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 
-from app import crud, schemas
+from app import crud, schemas, models
 from app.database import get_db
+from app.auth import get_current_user
+
 
 # Create a router for todo endpoints
 router = APIRouter(tags = ["todos"])
@@ -15,23 +17,60 @@ def list_todos(db:Session = Depends(get_db)):
 
 # create a new todo
 @router.post("/", response_model= schemas.TodoOut)
-def create_todo(todo: schemas.TodoCreate,db: Session = Depends(get_db)):
-    new_todo = crud.create_todo(db, todo)
+def create_todo(
+    todo: schemas.TodoCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    
+    new_todo = models.Todo(**todo.dict(), owner_id=current_user.id)
+    db.add(new_todo)
+    db.commit()
+    db.refresh(new_todo)
     return new_todo
+
 
 # update an existing todo
 @router.put("/{todo_id}", response_model= schemas.TodoOut)
-def update_todo(todo_id: int, todo_data: schemas.TodoUpdate, db: Session= Depends(get_db)):
-    updated_todo = crud.update_todo(db, todo_id, todo_data)
-    if not updated_todo:
-        raise HTTPException(status_code = 404, detail = "Todo Not found")
-    return updated_todo
+def update_todo(
+    todo_id: int,
+    todo_data: schemas.TodoUpdate,
+    db: Session=Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    
+    todo  = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+
+    if not todo:
+        raise HTTPException(status_code=404, detail="todo not found")
+    
+    if todo.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to modify this todo")
+    
+    for key, value in todo_data.dict(exclude_unset=True).items():
+        setattr(todo, key, value)
+
+    db.commit()
+    db.refresh(todo)
+    return todo
 
 
 # delete a todo
 @router.delete("/{todo_id}", response_model= schemas.TodoOut)
-def delete_todo(todo_id: int, db: Session= Depends(get_db)):
-    deleted_todo = crud.delete_todo(db, todo_id)
-    if not deleted_todo:
-        raise HTTPException(status_code = 404, detail = "Todo Not found")
-    return deleted_todo
+def delete_todo(
+    todo_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    
+    todo = db.query(models.Todo).filter(models.Todo.id == todo_id).first()
+
+    if not todo:
+        raise HTTPException(status_code=404, detail="todo not found")
+    
+    if(todo.owner_id != current_user.id):
+        raise HTTPException(status_code=403, detail="Not authorized to delete this todo")
+    
+    db.delete(todo)
+    db.commit()
+    return todo

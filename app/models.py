@@ -18,6 +18,8 @@ class Todo(Base):
     id = Column(Integer, primary_key=True, nullable=False, index=True)
     title = Column(String, nullable=False, index=True)
     completed = Column(Boolean, default=False)
-    user_id = Column(Integer, ForeignKey("users.id"))
 
+    # link Todo to the User who owns it
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    
     owner = relationship("User", back_populates="todos")  # Establish relationship with User model
